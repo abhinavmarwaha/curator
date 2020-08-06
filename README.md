@@ -1,4 +1,4 @@
-# curator
+# Curator
 
 Yet again another rss reader with podcast support. 
 
@@ -14,4 +14,15 @@ Yet again another rss reader with podcast support.
 
 ## Getting Started
 
-you can get the latest release from releases.
+you can get the latest release [here](https://github.com/abhinavmarwaha/curator/releases).
+
+## Issues
+
+* The state management is not so great.
+
+## Todo
+
+[Roadmap](https://github.com/abhinavmarwaha/curator/projects/2).
+
+
+
