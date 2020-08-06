@@ -35,12 +35,15 @@ dependencies:
   path:
   http: ^0.12.1
   url_launcher: ^5.5.0
-  pull_to_refresh: ^1.6.0
+  # pull_to_refresh: ^1.6.0
   audio_service: ^0.11.2
   just_audio: ^0.2.2
   shared_preferences: 0.5.8
   provider: ^4.3.1
   vibration: ^1.4.0
+  flutter_html: ^1.0.0-pre.1
+  flutter_speed_dial: ^1.2.5
+  html_main_element: ^1.0.1
 
 dev_dependencies:
   flutter_test:

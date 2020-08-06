@@ -1,13 +1,19 @@
 import 'package:curator/Models/CRssFeedItem.dart';
+import 'package:curator/Screens/ZenReader.dart';
 import 'package:curator/Utilities/utilities.dart';
 import 'package:curator/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:curator/Models/CRssFeed.dart';
 import 'package:curator/dbHelper.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+// import 'package:pull_to_refresh/pull_to_refresh.dart';
+import './feedsScreen.dart';
 
 import 'package:webfeed/webfeed.dart';
 import 'package:http/http.dart' as http;
+
+BuildContext _scaffoldContext;
 
 class WebRssScreen extends StatefulWidget {
   WebRssScreen({Key key, this.title}) : super(key: key);
@@ -25,6 +31,7 @@ class _WebRssScreenState extends State<WebRssScreen> {
   String _selectedCat = "All";
   bool _bookmarkUI = false;
   bool _readUI = false;
+  bool _zenReader = false;
 
   DbHelper _dbHelper = new DbHelper();
 
@@ -32,6 +39,7 @@ class _WebRssScreenState extends State<WebRssScreen> {
   void initState() {
     getFeedItems(_selectedCat);
     getCategories();
+    Utilities.getZenBool().then((value) => _zenReader = value);
     super.initState();
   }
 
@@ -40,56 +48,82 @@ class _WebRssScreenState extends State<WebRssScreen> {
     super.dispose();
   }
 
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  bool dialVisible = true;
 
-  void _onRefresh() async {
-    await getFeedItems(_selectedCat);
-    await getCategories();
-    await Future.delayed(Duration(milliseconds: 1000));
-    _refreshController.refreshCompleted();
+  void setDialVisible(bool value) {
+    setState(() {
+      dialVisible = value;
+    });
   }
 
-  void _onLoading() async {
-    await Future.delayed(Duration(milliseconds: 1000));
-    _refreshController.loadComplete();
+  SpeedDial buildSpeedDial() {
+    return SpeedDial(
+      child: Icon(Icons.add),
+      animatedIconTheme: IconThemeData(size: 22.0),
+      onOpen: () => print('OPENING DIAL'),
+      onClose: () => print('DIAL CLOSED'),
+      visible: dialVisible,
+      curve: Curves.bounceIn,
+      children: [
+        SpeedDialChild(
+          child: Icon(Icons.rss_feed, color: Colors.white),
+          backgroundColor: Colors.deepOrange,
+          onTap: () => showAddDialog(context, false),
+          label: 'Rss Feed',
+          labelStyle: TextStyle(fontWeight: FontWeight.w500),
+          labelBackgroundColor: Colors.deepOrangeAccent,
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.rss_feed, color: Colors.white),
+          backgroundColor: Colors.green,
+          onTap: () => showAddDialog(context, true),
+          label: 'Atom Feed',
+          labelStyle: TextStyle(fontWeight: FontWeight.w500),
+          labelBackgroundColor: Colors.green,
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     TextStyle greyTextStyle = new TextStyle(color: Colors.grey);
+    _scaffoldContext = context;
 
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showAddDialog(context);
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-        elevation: 2.0,
-      ),
+      floatingActionButton: buildSpeedDial(),
       body: Column(
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(new MaterialPageRoute(
+                      builder: (context) => FeedsScreen(false)));
+                },
+                child: Text("Feeds"),
+              ),
+              Spacer(),
               GestureDetector(
                 onTap: () {
                   setState(() {
                     _readUI = false;
                     _bookmarkUI = false;
                     getFeedItems(_selectedCat);
+                    // getFeedItems(_selectedCat);
+                    Utilities.vibrate();
                   });
                 },
                 child: !_bookmarkUI && !_readUI
                     ? Icon(
-                        Icons.bookmark,
+                        Icons.rss_feed,
                         color: Colors.black,
                       )
                     : Icon(
-                        Icons.bookmark,
-                        color: Colors.white,
+                        Icons.rss_feed,
+                        color: Colors.grey,
                       ),
               ),
               GestureDetector(
@@ -98,16 +132,18 @@ class _WebRssScreenState extends State<WebRssScreen> {
                     _readUI = true;
                     _bookmarkUI = false;
                     getFeedItems(_selectedCat);
+                    // getFeedItems(_selectedCat);
+                    Utilities.vibrate();
                   });
                 },
                 child: _readUI
                     ? Icon(
-                        Icons.book,
+                        Icons.done_all,
                         color: Colors.black,
                       )
                     : Icon(
-                        Icons.book,
-                        color: Colors.white,
+                        Icons.done_all,
+                        color: Colors.grey,
                       ),
               ),
               GestureDetector(
@@ -116,6 +152,8 @@ class _WebRssScreenState extends State<WebRssScreen> {
                     _bookmarkUI = true;
                     _readUI = false;
                     getFeedItems(_selectedCat);
+                    // getFeedItems(_selectedCat)
+                    Utilities.vibrate();
                   });
                 },
                 child: _bookmarkUI
@@ -125,11 +163,12 @@ class _WebRssScreenState extends State<WebRssScreen> {
                       )
                     : Icon(
                         Icons.bookmark,
-                        color: Colors.white,
+                        color: Colors.grey,
                       ),
               ),
             ],
           ),
+          getClearBookmarkWidget(),
           Container(
             height: 25,
             child: ListView.builder(
@@ -137,12 +176,75 @@ class _WebRssScreenState extends State<WebRssScreen> {
               padding: const EdgeInsets.all(2.0),
               itemBuilder: (context, index) {
                 return GestureDetector(
+                    onLongPress: () {
+                      if (_categories[index].compareTo("All") != 0)
+                        showDialog(
+                            builder: (context) => Dialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                  child: Container(
+                                    height: 120,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text("Delete " +
+                                            _categories[index] +
+                                            "?"),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            RaisedButton(
+                                              onPressed: () {
+                                                _dbHelper
+                                                    .deleteCat(
+                                                        _categories[index],
+                                                        webCategories,
+                                                        webFeeds,
+                                                        webRssItems)
+                                                    .then((value) {
+                                                  setState(() {
+                                                    Navigator.pop(context);
+                                                    getCategories();
+                                                    _isSelected[_selectedCat] =
+                                                        false;
+                                                    _selectedCat = "All";
+                                                    _isSelected["All"] = true;
+                                                    getFeedItems(_selectedCat);
+                                                  });
+                                                });
+                                              },
+                                              child: Text("Yes"),
+                                            ),
+                                            RaisedButton(
+                                              child: Text("No"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            context: context);
+                    },
                     onTap: () {
+                      Utilities.vibrate();
                       setState(() {
                         _isSelected[_selectedCat] = false;
                         _selectedCat = _categories[index];
                         _isSelected[_selectedCat] = true;
+                        //  getFeedItems(_selectedCat);
                         getFeedItems(_selectedCat);
+                        // _onRefresh();
                       });
                     },
                     child: Padding(
@@ -161,28 +263,29 @@ class _WebRssScreenState extends State<WebRssScreen> {
           Flexible(
             child: Padding(
               padding: EdgeInsets.all(8),
-              child: SmartRefresher(
-                enablePullDown: true,
-                controller: _refreshController,
-                onRefresh: _onRefresh,
-                onLoading: _onLoading,
-                child: ListView.builder(
-                    itemCount: _feeditems.length,
-                    padding: const EdgeInsets.all(15.0),
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          readRssitem(index);
+              child: ListView.builder(
+                  itemCount: _feeditems.length,
+                  padding: const EdgeInsets.all(15.0),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        readRssitemWithoutState(index);
+                        if (_zenReader)
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                ZenReader(_feeditems[index].url),
+                          ));
+                        else
                           Utilities.launchInWebViewOrVC(_feeditems[index].url);
-                        },
-                        onLongPress: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Dialog(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(20.0)),
+                      },
+                      onLongPress: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0)),
+                                child: SingleChildScrollView(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
@@ -190,86 +293,91 @@ class _WebRssScreenState extends State<WebRssScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Padding(
                                             padding: EdgeInsets.all(5),
                                             child: RaisedButton(
                                               onPressed: () {
-                                                saveBookmark(index);
+                                                _feeditems[index].bookmarked
+                                                    ? deleteBookmark(index)
+                                                    : saveBookmark(index);
                                               },
-                                              child: Text("Save"),
+                                              child:
+                                                  _feeditems[index].bookmarked
+                                                      ? Text("Delete Bookmark")
+                                                      : Text("Save"),
                                             ),
                                           ),
                                           Padding(
                                             padding: EdgeInsets.all(5),
                                             child: RaisedButton(
                                               onPressed: () {
-                                                readRssitem(index);
+                                                _feeditems[index].read
+                                                    ? unReadRssitem(index)
+                                                    : readRssitem(index);
                                               },
-                                              child: Text("Listened"),
+                                              child: _feeditems[index].read
+                                                  ? Text("Unread")
+                                                  : Text("Read"),
                                             ),
                                           ),
                                         ],
                                       ),
                                       Padding(
+                                          padding: EdgeInsets.all(5),
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.65,
+                                            child: Text(
+                                              _feeditems[index].title,
+                                              textAlign: TextAlign.center,
+                                              overflow: TextOverflow.visible,
+                                            ),
+                                          )),
+                                      Divider(),
+                                      Padding(
                                         padding: EdgeInsets.all(5),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: <Widget>[
-                                            Text("Title:"),
-                                            Text(_feeditems[index].title)
-                                          ],
+                                        child: Text(
+                                          _feeditems[index].pubDate,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      Padding(
-                                          padding: EdgeInsets.all(5),
-                                          child: Text("Descrition")),
-                                      Padding(
-                                          padding: EdgeInsets.all(5),
-                                          child: Text(_feeditems[index].desc)),
+                                      Divider(),
                                       getAuthor(_feeditems[index].author),
+                                      getAuthorDivider(
+                                          _feeditems[index].author),
                                       Padding(
-                                        padding: EdgeInsets.all(5),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: <Widget>[
-                                            Text("PubDate:"),
-                                            Text(_feeditems[index].pubDate)
-                                          ],
-                                        ),
-                                      ),
+                                          padding: EdgeInsets.all(5),
+                                          child: Html(
+                                              data: _feeditems[index].desc))
                                     ],
                                   ),
-                                );
-                              });
-                        },
-                        child: Card(
-                          elevation: 1,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: <Widget>[
-                                getImageWidget(_feeditems[index].picURL),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(Utilities.trimText(
-                                      _feeditems[index].title)),
                                 ),
-                              ],
-                            ),
+                              );
+                            });
+                      },
+                      child: Card(
+                        elevation: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: <Widget>[
+                              getImageWidget(_feeditems[index].picURL),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(Utilities.trimText(
+                                    _feeditems[index].title)),
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    }),
-              ),
+                      ),
+                    );
+                  }),
             ),
           )
         ],
@@ -279,29 +387,85 @@ class _WebRssScreenState extends State<WebRssScreen> {
 
   readRssitem(int index) {
     _feeditems[index].read = true;
-    _dbHelper.editRssFeedItem(_feeditems[index], podcastRssItems).then((value) {
+    _dbHelper.editRssFeedItem(_feeditems[index], webRssItems).then((value) {
       Navigator.of(context).pop();
+      getFeedItems(_selectedCat);
+      // getFeedItems(_selectedCat);
     });
   }
 
-  getAuthor(String author) {
-    if (author != null && author.compareTo("") != 0) {
-      return Padding(
-        padding: EdgeInsets.all(5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[Text("Author:"), Text(author)],
-        ),
+  readRssitemWithoutState(int index) {
+    _feeditems[index].read = true;
+    _dbHelper.editRssFeedItem(_feeditems[index], webRssItems).then((value) {
+      // getFeedItems(_selectedCat);
+    });
+  }
+
+  unReadRssitem(int index) {
+    _feeditems[index].read = false;
+    _dbHelper.editRssFeedItem(_feeditems[index], webRssItems).then((value) {
+      Navigator.of(context).pop();
+      getFeedItems(_selectedCat);
+      // getFeedItems(_selectedCat);
+    });
+  }
+
+  getClearBookmarkWidget() {
+    if (_readUI) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              _dbHelper.clearTable(webRssItems).then((value) {
+                getFeedItems(_selectedCat);
+                // getFeedItems(_selectedCat);
+              });
+            },
+            child: Text("Clear"),
+          )
+        ],
       );
     } else {
       return Container();
     }
   }
 
+  deleteBookmark(int index) {
+    _feeditems[index].bookmarked = false;
+
+    _dbHelper
+        .editRssFeedItem(_feeditems[index], webRssItems)
+        .then((value) => getFeedItems(_selectedCat));
+  }
+
+  getAuthor(String author) {
+    if (author != null && author.compareTo("") != 0) {
+      return Padding(
+          padding: EdgeInsets.all(5),
+          child: Text(
+            author,
+            textAlign: TextAlign.center,
+          ));
+    } else {
+      return Container();
+    }
+  }
+
+  getAuthorDivider(String author) {
+    if (author != null && author.compareTo("") != 0) {
+      return Divider();
+    } else {
+      return Container();
+    }
+  }
+
   saveBookmark(int index) {
-    _dbHelper.insertRssFeedtem(_feeditems[index], webBookmarks);
+    _feeditems[index].bookmarked = true;
+    _dbHelper.editRssFeedItem(_feeditems[index], webRssItems).then((value) {
+      Navigator.of(context).pop();
+      getFeedItems(_selectedCat);
+    });
   }
 
   getCategories() {
@@ -320,55 +484,115 @@ class _WebRssScreenState extends State<WebRssScreen> {
   }
 
   getFeedItems(String cat) {
-    _feeditems.clear();
-    if (_bookmarkUI) {
-      _dbHelper.getBookmarks(cat, webBookmarks).then((feedItems) {
-        setState(() {
-          _feeditems = feedItems;
+    try {
+      _feeditems.clear();
+      if (_bookmarkUI) {
+        _dbHelper.getBookmarks(cat, webRssItems).then((feedItems) {
+          if (cat.compareTo(_selectedCat) == 0 && _bookmarkUI)
+            setState(() {
+              _feeditems = feedItems;
+            });
         });
-      });
-    } else if (_readUI) {
-      _dbHelper.getReadRssItems(cat, webRssItems).then((feedItems) {
-        setState(() {
-          _feeditems = feedItems;
+      } else if (_readUI) {
+        _dbHelper.getReadRssItems(cat, webRssItems).then((feedItems) {
+          if (cat.compareTo(_selectedCat) == 0 && _readUI)
+            setState(() {
+              _feeditems = feedItems;
+            });
         });
-      });
-    } else {
-      _dbHelper.getRssFeeds(cat, webFeeds).then((feeds) {
-        feeds.forEach((feed) async {
-          print(feed.url);
-          var rssFeed =
-              new RssFeed.parse((await http.Client().get(feed.url)).body);
-          _dbHelper.getUnreadRssItems(cat, webRssItems).then((feedItems) {
-            if (rssFeed.lastBuildDate.compareTo(feed.lastBuildDate) != 0) {
-              rssFeed.items.forEach((feedItem) {
-                String url = "";
-                if (feedItem.enclosure != null &&
-                    feedItem.enclosure.type.compareTo("image/jpg") == 0)
-                  url = feedItem.enclosure.url;
-                CRssFeedItem item = new CRssFeedItem(
-                    feedID: feed.id,
-                    title: feedItem.title,
-                    desc: feedItem.description,
-                    url: feedItem.link,
-                    read: false,
-                    picURL: url,
-                    pubDate: feedItem.pubDate,
-                    author: feedItem.author);
-                _dbHelper.hasFeeditem(item, webRssItems).then((value) {
-                  if (!value) {
-                    _feeditems.add(item);
-                    _dbHelper.insertRssFeedtem(item, webRssItems);
-                  }
+      } else {
+        _dbHelper.getRssFeeds(cat, webFeeds).then((feeds) {
+          if (cat.compareTo(_selectedCat) == 0 && !_readUI && !_bookmarkUI)
+            feeds.forEach((feed) async {
+              RssFeed rssFeed;
+              AtomFeed atomFeed;
+              print(feed.url);
+              String FeedBody = (await http.Client().get(feed.url)).body;
+              if (feed.atom)
+                atomFeed = new AtomFeed.parse(FeedBody);
+              else
+                rssFeed = new RssFeed.parse(FeedBody);
+              _dbHelper.getUnreadRssItems(cat, webRssItems).then((feedItems) {
+                // if (feed.lastBuildDate == null) {
+                if (feed.atom) {
+                  print(atomFeed.items.length);
+                  // if (atomFeed.updated.compareTo(feed.lastBuildDate) != 0)
+                  if (cat.compareTo(_selectedCat) == 0 &&
+                      !_readUI &&
+                      !_bookmarkUI)
+                    atomFeed.items.forEach((feedItem) {
+                      if (cat.compareTo(_selectedCat) == 0 &&
+                          !_readUI &&
+                          !_bookmarkUI) {
+                        CRssFeedItem item = new CRssFeedItem(
+                            feedID: feed.id.toString(),
+                            title: feedItem.title,
+                            desc: feedItem.summary == null
+                                ? ""
+                                : feedItem.summary,
+                            url: feedItem.links[0].href,
+                            read: false,
+                            picURL: "",
+                            pubDate: feedItem.updated,
+                            author: feedItem.authors.length == 0
+                                ? ""
+                                : feedItem.authors[0].name,
+                            catgry: cat,
+                            bookmarked: false);
+                        _dbHelper.hasFeeditem(item, webRssItems).then((value) {
+                          if (!value) {
+                            _feeditems.add(item);
+                            _dbHelper.insertRssFeedtem(item, webRssItems);
+                          }
+                        });
+                      }
+                    });
+                } else {
+                  if (cat.compareTo(_selectedCat) == 0 &&
+                      !_readUI &&
+                      !_bookmarkUI)
+                    rssFeed.items.forEach((feedItem) {
+                      if (cat.compareTo(_selectedCat) == 0 &&
+                          !_readUI &&
+                          !_bookmarkUI) {
+                        String url = "";
+                        if (feedItem.enclosure != null &&
+                            feedItem.enclosure.type.compareTo("image/jpg") == 0)
+                          url = feedItem.enclosure.url;
+                        CRssFeedItem item = new CRssFeedItem(
+                            feedID: feed.id.toString(),
+                            title: feedItem.title,
+                            desc: feedItem.description,
+                            url: feedItem.link,
+                            read: false,
+                            picURL: url,
+                            pubDate: feedItem.pubDate,
+                            author: feedItem.author,
+                            catgry: cat,
+                            bookmarked: false);
+                        _dbHelper.hasFeeditem(item, webRssItems).then((value) {
+                          if (!value) {
+                            _feeditems.add(item);
+                            _dbHelper.insertRssFeedtem(item, webRssItems);
+                          }
+                        });
+                      }
+                    });
+                }
+                // }
+                setState(() {
+                  if (cat.compareTo(_selectedCat) == 0 &&
+                      !_readUI &&
+                      !_bookmarkUI) _feeditems += feedItems;
                 });
               });
-            }
-            setState(() {
-              _feeditems += feedItems;
             });
-          });
         });
-      });
+      }
+    } catch (e) {
+      final snackBar = SnackBar(content: Text('Some Error has occured'));
+      Scaffold.of(_scaffoldContext).showSnackBar(snackBar);
+      print(e.toString());
     }
   }
 
@@ -380,7 +604,7 @@ class _WebRssScreenState extends State<WebRssScreen> {
     }
   }
 
-  showAddDialog(BuildContext context) {
+  showAddDialog(BuildContext contex, bool atom) {
     final rssTextController = TextEditingController();
     final catTextController = TextEditingController();
     String catgry;
@@ -405,11 +629,12 @@ class _WebRssScreenState extends State<WebRssScreen> {
                       .insertCategory(catTextController.text, webCategories)
                       .then((value) {
                     setState(() {
-                      _isSelected[catTextController.text] = true;
+                      _categories.add(catTextController.text);
                       _isSelected[_selectedCat] = false;
                       _selectedCat = catTextController.text;
-                      _categories.add(catTextController.text);
+                      _isSelected[_selectedCat] = true;
                       getFeedItems(_selectedCat);
+                      // getFeedItems(_selectedCat);
                     });
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
@@ -441,8 +666,7 @@ class _WebRssScreenState extends State<WebRssScreen> {
                       TextField(
                         controller: rssTextController,
                         decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Rss Feed Link'),
+                            border: InputBorder.none, hintText: 'Feed Link'),
                       ),
                       Row(
                         children: <Widget>[
@@ -478,35 +702,70 @@ class _WebRssScreenState extends State<WebRssScreen> {
                         height: 40,
                         child: RaisedButton(
                           onPressed: () async {
-                            String rssURL = rssTextController.text;
-                            String rssURL2;
-                            rssURL2 = rssURL.toString();
-                            final response =
-                                await http.Client().get(Uri.parse(rssURL));
-                            var rssFeed = new RssFeed.parse(response.body);
-                            String url = "";
-                            if (rssFeed.image != null) url = rssFeed.image.url;
-                            final CRssFeed rss = new CRssFeed(
-                                title: rssFeed.title,
-                                desc: rssFeed.description,
-                                picURL: url,
-                                catgry: catgry,
-                                url: rssURL2,
-                                author: rssFeed.author,
-                                lastBuildDate: rssFeed.lastBuildDate);
+                            final snackBar = SnackBar(content: Text('Loading'));
+                            Scaffold.of(_scaffoldContext)
+                                .showSnackBar(snackBar);
+                            try {
+                              String rssURL = rssTextController.text;
+                              if (catgry.compareTo("") == 0) catgry = "All";
+                              final response =
+                                  await http.Client().get(Uri.parse(rssURL));
+                              CRssFeed rss;
+                              if (atom) {
+                                print("insideA Atom");
+                                AtomFeed atomFeed =
+                                    new AtomFeed.parse(response.body);
+                                String url = "";
+                                if (atomFeed.logo != null) url = atomFeed.logo;
+                                rss = new CRssFeed(
+                                    title: atomFeed.title,
+                                    desc: atomFeed.subtitle == null
+                                        ? ""
+                                        : atomFeed.subtitle,
+                                    picURL: url,
+                                    catgry: catgry,
+                                    url: rssURL,
+                                    author: atomFeed.authors.length == 0
+                                        ? ""
+                                        : atomFeed.authors[0].name,
+                                    lastBuildDate: atomFeed.updated,
+                                    atom: atom);
+                              } else {
+                                var rssFeed = new RssFeed.parse(response.body);
+                                String url = "";
+                                if (rssFeed.image != null)
+                                  url = rssFeed.image.url;
+                                rss = new CRssFeed(
+                                    title: rssFeed.title,
+                                    desc: rssFeed.description,
+                                    picURL: url,
+                                    catgry: catgry,
+                                    url: rssURL,
+                                    author: rssFeed.author,
+                                    lastBuildDate: rssFeed.lastBuildDate,
+                                    atom: atom);
+                              }
 
-                            _dbHelper
-                                .insertRssFeed(rss, webFeeds)
-                                .then((value) {
-                              setState(() {
-                                _isSelected[_selectedCat] = false;
-                                _selectedCat = catgry;
-                                _isSelected[catgry] = true;
+                              _dbHelper
+                                  .insertRssFeed(rss, webFeeds)
+                                  .then((value) {
+                                setState(() {
+                                  _isSelected[_selectedCat] = false;
+                                  _selectedCat = catgry;
+                                  _isSelected[_selectedCat] = true;
+                                  getFeedItems(_selectedCat);
+                                  // getFeedItems(_selectedCat);
+                                });
+                                Navigator.of(context).pop();
                               });
-                              getFeedItems(_selectedCat);
-                              rssTextController.dispose();
+                            } catch (e) {
                               Navigator.of(context).pop();
-                            });
+                              final snackBar =
+                                  SnackBar(content: Text('Invalid Feed'));
+                              Scaffold.of(_scaffoldContext)
+                                  .showSnackBar(snackBar);
+                              print(e.toString());
+                            }
                           },
                           child: Text(
                             "Save",
@@ -525,4 +784,24 @@ class _WebRssScreenState extends State<WebRssScreen> {
       },
     );
   }
+
+  // openLink(String url) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return StatefulBuilder(
+  //           builder: (context, setState) {
+  //             bool _zenReader;
+  //             Utilities.getZenBool().then((value) => setState(() {
+  //                   _zenReader = value;
+  //                 }));
+  //             return Dialog(
+  //               shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(20.0)),
+  //               child: Container(),
+  //             );
+  //           },
+  //         );
+  //       });
+  // }
 }

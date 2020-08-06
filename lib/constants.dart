@@ -1,9 +1,11 @@
-final String webFeeds = "webFeeds";
-final String webCategories = "webCategories";
-final String webBookmarks = "webBookmarks";
-final String webRssItems = "webRssItems";
+const String webFeeds = "webFeeds";
+const String webCategories = "webCategories";
+const String webRssItems = "webRssItems";
 
-final String podcastFeeds = "podcastFeeds";
-final String podcastCategories = "podcastCategories";
-final String podcastBookmarks = "podcastBookmarks";
-final String podcastRssItems = "podcastRssItems";
+const String podcastFeeds = "podcastFeeds";
+const String podcastCategories = "podcastCategories";
+const String podcastRssItems = "podcastRssItems";
+
+const String PRIVACYPOLICYURL = "";
+const String FEATUREFORMURL = "https://forms.gle/p2oHzLMdwtpB6JKK7";
+const String RATEAPPURL = "";

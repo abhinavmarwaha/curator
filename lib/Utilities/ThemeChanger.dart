@@ -9,6 +9,7 @@ class ThemeChanger with ChangeNotifier {
     _themeData = ThemeData.light();
     getDarkModePlain().then((value) {
       _themeData = value;
+      notifyListeners();
     });
   }
 
@@ -18,20 +19,6 @@ class ThemeChanger with ChangeNotifier {
     _themeData = theme;
 
     notifyListeners();
-  }
-
-  getDarkMode() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('darkMode'))
-      _darkMode = prefs.getBool('darkMode');
-    else {
-      await prefs.setBool('darkMode', false);
-      _darkMode = false;
-    }
-
-    getThemeFromBool();
-    notifyListeners();
-    return _themeData;
   }
 
   setDarkMode(bool inp) async {

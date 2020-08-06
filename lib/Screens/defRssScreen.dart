@@ -34,7 +34,7 @@ class _DefRssScreenState extends State<DefRssScreen> {
     return Scaffold(
       body: SizedBox.expand(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+          padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
           child: PageView(
             controller: _pageController,
             onPageChanged: (index) {

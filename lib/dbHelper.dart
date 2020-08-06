@@ -14,20 +14,20 @@ class DbHelper {
     var database = openDatabase(
       join(await getDatabasesPath(), 'app_database.db'),
       onCreate: (db, version) {
+        // db.execute(
+        // "CREATE TABLE webBookmarks(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, mediaURL TEXT, url TEXT, pubDate TEXT, author TEXT, bookmarked INTEGER);");
         db.execute(
-            "CREATE TABLE webBookmarks(id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, url TEXT, pubDate TEXT, author TEXT);");
+            "CREATE TABLE webRssItems(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, mediaURL TEXT, url TEXT, pubDate TEXT, author TEXT, bookmarked INTEGER);");
         db.execute(
-            "CREATE TABLE webRssItems(id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, url TEXT, pubDate TEXT, author TEXT);");
-        db.execute(
-            "CREATE TABLE podcastRssItems(id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, url TEXT, pubDate TEXT, author TEXT);");
-        db.execute(
-            "CREATE TABLE podcastBookmarks(id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, url TEXT, pubDate TEXT, author TEXT);");
+            "CREATE TABLE podcastRssItems(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, mediaURL TEXT, url TEXT, pubDate TEXT, author TEXT, bookmarked INTEGER);");
+        // db.execute(
+        // "CREATE TABLE podcastBookmarks(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, mediaURL TEXT, url TEXT, pubDate TEXT, author TEXT);");
         db.execute(
             "CREATE TABLE podcastCategories(id INTEGER PRIMARY KEY, name TEXT)");
         db.execute(
             "CREATE TABLE webCategories(id INTEGER PRIMARY KEY, name TEXT); ");
         db.execute(
-            "CREATE TABLE podcastFeeds(id INTEGER PRIMARY KEY, title TEXT, desc TEXT, catgry TEXT, picURL TEXT, url TEXT, generatedDate TEXT);");
+            "CREATE TABLE podcastFeeds(id INTEGER PRIMARY KEY, title TEXT, desc TEXT, catgry TEXT, picURL TEXT, url TEXT, lastBuildDate TEXT, author TEXT, atom INTEGER);");
         db.insert(
           'webCategories',
           {'name': "All"},
@@ -39,7 +39,7 @@ class DbHelper {
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
         return db.execute(
-            "CREATE TABLE webFeeds(id INTEGER PRIMARY KEY, title TEXT, desc TEXT, catgry TEXT, picURL TEXT, url TEXT, generatedDate TEXT);");
+            "CREATE TABLE webFeeds(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, catgry TEXT, picURL TEXT, url TEXT, lastBuildDate TEXT, author TEXT, atom INTEGER);");
       },
       version: 1,
     );
@@ -90,8 +90,8 @@ class DbHelper {
   Future<bool> hasFeeditem(CRssFeedItem item, String dbName) async {
     final Database db = await getdb;
     return (await db.query(dbName,
-                where: "title = ? && author = ?",
-                whereArgs: [item.title, item.author]))
+                where: "title = ? AND pubDate = ?",
+                whereArgs: [item.title, item.pubDate]))
             .length !=
         0;
   }
@@ -106,14 +106,14 @@ class DbHelper {
     return List.generate(maps.length, (i) {
       print(maps[i]['title']);
       return CRssFeed(
-        id: maps[i]['id'],
-        title: maps[i]['title'],
-        desc: maps[i]['desc'],
-        catgry: maps[i]['catgry'],
-        picURL: maps[i]['picURL'],
-        url: maps[i]['url'],
-        lastBuildDate: maps[i]['lastBuildDate'],
-      );
+          id: maps[i]['id'],
+          title: maps[i]['title'],
+          desc: maps[i]['desc'],
+          catgry: maps[i]['catgry'],
+          picURL: maps[i]['picURL'],
+          url: maps[i]['url'],
+          lastBuildDate: maps[i]['lastBuildDate'],
+          atom: maps[i]['atom'] == 1);
     });
   }
 
@@ -121,23 +121,24 @@ class DbHelper {
     final Database db = await getdb;
     List<Map<String, dynamic>> maps;
     if (cat.compareTo("All") == 0)
-      maps = await db.query(dbName);
+      maps = await db.query(dbName, where: "bookmarked = ?", whereArgs: [1]);
     else
-      maps = await db.query(dbName, where: "catgry = ?", whereArgs: [cat]);
+      maps = await db.query(dbName,
+          where: "catgry = ? AND bookmarked = ?", whereArgs: [cat, 1]);
     return List.generate(maps.length, (i) {
       print(maps[i]['title']);
       return CRssFeedItem(
-        id: maps[i]['id'],
-        title: maps[i]['title'],
-        desc: maps[i]['desc'],
-        read: maps[i]['read'] == 1,
-        catgry: maps[i]['catgry'],
-        picURL: maps[i]['picURL'],
-        url: maps[i]['url'],
-        pubDate: maps[i]['pubDate'],
-        author: maps[i]['author'],
-        feedID: maps[i]['feedID'],
-      );
+          id: maps[i]['id'],
+          title: maps[i]['title'],
+          desc: maps[i]['desc'],
+          read: maps[i]['read'] == 1,
+          catgry: maps[i]['catgry'],
+          picURL: maps[i]['picURL'],
+          url: maps[i]['url'],
+          pubDate: maps[i]['pubDate'],
+          author: maps[i]['author'],
+          feedID: maps[i]['feedID'],
+          bookmarked: maps[i]['bookmarked'] == 1);
     });
   }
 
@@ -145,24 +146,24 @@ class DbHelper {
     final Database db = await getdb;
     List<Map<String, dynamic>> maps;
     if (cat.compareTo("All") == 0)
-      maps = await db.query(dbName);
+      maps = await db.query(dbName, where: "read == ?", whereArgs: [1]);
     else
-      maps = await db
-          .query(dbName, where: "catgry = ? && read == ?", whereArgs: [cat, 1]);
+      maps = await db.query(dbName,
+          where: "catgry = ? AND read == ?", whereArgs: [cat, 1]);
     return List.generate(maps.length, (i) {
       print(maps[i]['title']);
       return CRssFeedItem(
-        id: maps[i]['id'],
-        title: maps[i]['title'],
-        desc: maps[i]['desc'],
-        read: maps[i]['read'] == 1,
-        catgry: maps[i]['catgry'],
-        picURL: maps[i]['picURL'],
-        url: maps[i]['url'],
-        pubDate: maps[i]['pubDate'],
-        author: maps[i]['author'],
-        feedID: maps[i]['feedID'],
-      );
+          id: maps[i]['id'],
+          title: maps[i]['title'],
+          desc: maps[i]['desc'],
+          read: maps[i]['read'] == 1,
+          catgry: maps[i]['catgry'],
+          picURL: maps[i]['picURL'],
+          url: maps[i]['url'],
+          pubDate: maps[i]['pubDate'],
+          author: maps[i]['author'],
+          feedID: maps[i]['feedID'],
+          bookmarked: maps[i]['bookmarked'] == 1);
     });
   }
 
@@ -170,25 +171,26 @@ class DbHelper {
       String cat, String dbName) async {
     final Database db = await getdb;
     List<Map<String, dynamic>> maps;
+    print(cat);
     if (cat.compareTo("All") == 0)
-      maps = await db.query(dbName);
+      maps = await db.query(dbName, where: "read == ?", whereArgs: [0]);
     else
-      maps = await db
-          .query(dbName, where: "catgry = ? && read == ?", whereArgs: [cat, 0]);
+      maps = await db.query(dbName,
+          where: "catgry = ? AND read == ?", whereArgs: [cat, 0]);
     return List.generate(maps.length, (i) {
       print(maps[i]['title']);
       return CRssFeedItem(
-        id: maps[i]['id'],
-        title: maps[i]['title'],
-        desc: maps[i]['desc'],
-        read: maps[i]['read'] == 1,
-        catgry: maps[i]['catgry'],
-        picURL: maps[i]['picURL'],
-        url: maps[i]['url'],
-        pubDate: maps[i]['pubDate'],
-        author: maps[i]['author'],
-        feedID: maps[i]['feedID'],
-      );
+          id: maps[i]['id'],
+          title: maps[i]['title'],
+          desc: maps[i]['desc'],
+          read: maps[i]['read'] == 1,
+          catgry: maps[i]['catgry'],
+          picURL: maps[i]['picURL'],
+          url: maps[i]['url'],
+          pubDate: maps[i]['pubDate'],
+          author: maps[i]['author'],
+          feedID: maps[i]['feedID'],
+          bookmarked: maps[i]['bookmarked'] == 1);
     });
   }
 
@@ -201,14 +203,45 @@ class DbHelper {
     });
   }
 
-  Future<void> deleteRssFeed(int id) async {
+  Future<void> deleteRssFeed(int id, String dbName) async {
     final db = await getdb;
 
     await db.delete(
-      'web',
+      dbName,
       where: "id = ?",
       whereArgs: [id],
     );
+  }
+
+  Future<void> deleteCat(
+      String name, String catDb, String feedsDb, String feedsItemdb) async {
+    final db = await getdb;
+
+    Batch batch = db.batch();
+    batch.delete(feedsDb, where: "catgry == ?", whereArgs: [name]);
+    batch.delete(
+      feedsItemdb,
+      where: "catgry = ?",
+      whereArgs: [
+        name,
+      ],
+    );
+    batch.delete(
+      catDb,
+      where: "name = ?",
+      whereArgs: [name],
+    );
+    await batch.commit();
+  }
+
+  Future<void> clearTable(String dbName) async {
+    final db = await getdb;
+    await db.delete(dbName);
+  }
+
+  Future<void> deleteBookmark(CRssFeedItem bookmark, String dbName) async {
+    final db = await getdb;
+    await db.delete(dbName, where: "id = ?", whereArgs: [bookmark.id]);
   }
 
   Future<void> editRssFeed(CRssFeed feed, String dbName) async {

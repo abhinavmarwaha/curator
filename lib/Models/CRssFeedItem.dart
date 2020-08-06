@@ -7,9 +7,9 @@ class CRssFeedItem {
   final String catgry;
   final String pubDate;
   final String author;
-  final int feedID;
+  final String feedID;
   final String mediaURL;
-
+  bool bookmarked;
   bool read;
 
   CRssFeedItem(
@@ -23,7 +23,8 @@ class CRssFeedItem {
       this.url,
       this.pubDate,
       this.author,
-      this.feedID});
+      this.feedID,
+      this.bookmarked});
 
   Map<String, dynamic> toMap() {
     return {
@@ -37,7 +38,8 @@ class CRssFeedItem {
       'pubDate': pubDate,
       'author': author,
       'feedID': feedID,
-      'mediaURL': mediaURL
+      'mediaURL': mediaURL,
+      'bookmarked': bookmarked ? 1 : 0
     };
   }
 }

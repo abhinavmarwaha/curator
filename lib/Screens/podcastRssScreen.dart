@@ -1,14 +1,19 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:curator/Models/CRssFeedItem.dart';
 import 'package:curator/Models/CRssFeed.dart';
+import 'package:curator/Screens/feedsScreen.dart';
 import 'package:curator/Utilities/audio.dart';
+import 'package:curator/Utilities/utilities.dart';
 import 'package:curator/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:curator/dbHelper.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+// import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import 'package:webfeed/webfeed.dart';
 import 'package:http/http.dart' as http;
+
+BuildContext _scaffoldContext;
 
 class PodcastRssScreen extends StatefulWidget {
   PodcastRssScreen({Key key, this.title}) : super(key: key);
@@ -42,24 +47,25 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
     super.dispose();
   }
 
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  // RefreshController _refreshController =
+  //     RefreshController(initialRefresh: false);
 
-  void _onRefresh() async {
-    await getFeedItems(_selectedCat);
-    await getCategories();
-    await Future.delayed(Duration(milliseconds: 1000));
-    _refreshController.refreshCompleted();
-  }
+  // void _onRefresh() async {
+  //   await getFeedItems(_selectedCat);
+  //   await getCategories();
+  //   await Future.delayed(Duration(milliseconds: 1000));
+  //   _refreshController.refreshCompleted();
+  // }
 
-  void _onLoading() async {
-    await Future.delayed(Duration(milliseconds: 1000));
-    _refreshController.loadComplete();
-  }
+  // void _onLoading() async {
+  //   await Future.delayed(Duration(milliseconds: 1000));
+  //   _refreshController.loadComplete();
+  // }
 
   @override
   Widget build(BuildContext context) {
     TextStyle greyTextStyle = new TextStyle(color: Colors.grey);
+    _scaffoldContext = context;
 
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -74,24 +80,34 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
       body: Column(
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(new MaterialPageRoute(
+                      builder: (context) => FeedsScreen(true)));
+                },
+                child: Text("Feeds"),
+              ),
+              Spacer(),
               GestureDetector(
                 onTap: () {
                   setState(() {
                     _readUI = false;
                     _bookmarkUI = false;
                     getFeedItems(_selectedCat);
+                    // getFeedItems(_selectedCat);
+                    Utilities.vibrate();
                   });
                 },
                 child: !_bookmarkUI && !_readUI
                     ? Icon(
-                        Icons.bookmark,
+                        Icons.rss_feed,
                         color: Colors.black,
                       )
                     : Icon(
-                        Icons.bookmark,
-                        color: Colors.white,
+                        Icons.rss_feed,
+                        color: Colors.grey,
                       ),
               ),
               GestureDetector(
@@ -100,16 +116,18 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
                     _readUI = true;
                     _bookmarkUI = false;
                     getFeedItems(_selectedCat);
+                    // getFeedItems(_selectedCat);
+                    Utilities.vibrate();
                   });
                 },
                 child: _readUI
                     ? Icon(
-                        Icons.book,
+                        Icons.done_all,
                         color: Colors.black,
                       )
                     : Icon(
-                        Icons.book,
-                        color: Colors.white,
+                        Icons.done_all,
+                        color: Colors.grey,
                       ),
               ),
               GestureDetector(
@@ -118,6 +136,8 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
                     _bookmarkUI = true;
                     _readUI = false;
                     getFeedItems(_selectedCat);
+                    // getFeedItems(_selectedCat);
+                    Utilities.vibrate();
                   });
                 },
                 child: _bookmarkUI
@@ -127,23 +147,86 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
                       )
                     : Icon(
                         Icons.bookmark,
-                        color: Colors.white,
+                        color: Colors.grey,
                       ),
               ),
             ],
           ),
+          getClearBookmarkWidget(),
           Container(
-            height: 20,
+            height: 30,
             child: ListView.builder(
               itemCount: _categories.length,
               padding: const EdgeInsets.all(2.0),
               itemBuilder: (context, index) {
                 return GestureDetector(
+                    onLongPress: () {
+                      if (_categories[index].compareTo("All") != 0)
+                        showDialog(
+                            builder: (context) => Dialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                  child: Container(
+                                    height: 120,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text("Delete " +
+                                            _categories[index] +
+                                            "?"),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            RaisedButton(
+                                              onPressed: () {
+                                                _dbHelper
+                                                    .deleteCat(
+                                                        _categories[index],
+                                                        podcastCategories,
+                                                        podcastFeeds,
+                                                        podcastRssItems)
+                                                    .then((value) {
+                                                  setState(() {
+                                                    Navigator.pop(context);
+                                                    getCategories();
+                                                    _isSelected[_selectedCat] =
+                                                        false;
+                                                    _selectedCat = "All";
+                                                    _isSelected["All"] = true;
+                                                    getFeedItems(_selectedCat);
+                                                  });
+                                                });
+                                              },
+                                              child: Text("Yes"),
+                                            ),
+                                            RaisedButton(
+                                              child: Text("No"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            context: context);
+                    },
                     onTap: () {
+                      Utilities.vibrate();
                       setState(() {
                         _isSelected[_selectedCat] = false;
                         _selectedCat = _categories[index];
                         _isSelected[_selectedCat] = true;
+                        //  getFeedItems(_selectedCat);
                         getFeedItems(_selectedCat);
                       });
                     },
@@ -163,126 +246,160 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
           Flexible(
             child: Padding(
               padding: EdgeInsets.all(8),
-              child: SmartRefresher(
-                enablePullDown: true,
-                controller: _refreshController,
-                onRefresh: _onRefresh,
-                onLoading: _onLoading,
-                child: ListView.builder(
-                    itemCount: _feeditems.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        child: GestureDetector(
-                          onLongPress: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0)),
-                                    child: SingleChildScrollView(
-                                      child: Column(
+              child: ListView.builder(
+                  itemCount: _feeditems.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {},
+                      onLongPress: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0)),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
-                                          Row(
-                                            children: <Widget>[
-                                              Padding(
-                                                padding: EdgeInsets.all(5),
-                                                child: RaisedButton(
-                                                  onPressed: () {
-                                                    saveBookmark(index);
-                                                  },
-                                                  child: Text("Save"),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.all(5),
-                                                child: RaisedButton(
-                                                  onPressed: () {
-                                                    readRssitem(index);
-                                                  },
-                                                  child: Text("Listened"),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
                                           Padding(
                                             padding: EdgeInsets.all(5),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: <Widget>[
-                                                Text("Title:"),
-                                                Text(_feeditems[index].title)
-                                              ],
+                                            child: RaisedButton(
+                                              onPressed: () {
+                                                _feeditems[index].bookmarked
+                                                    ? deleteBookmark(index)
+                                                    : saveBookmark(index);
+                                              },
+                                              child:
+                                                  _feeditems[index].bookmarked
+                                                      ? Text("Delete Bookmark")
+                                                      : Text("Save"),
                                             ),
                                           ),
                                           Padding(
-                                              padding: EdgeInsets.all(5),
-                                              child: Text("Descrition")),
-                                          Padding(
-                                              padding: EdgeInsets.all(5),
-                                              child:
-                                                  Text(_feeditems[index].desc)),
-                                          getAuthor(_feeditems[index].author),
-                                          Padding(
                                             padding: EdgeInsets.all(5),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: <Widget>[
-                                                Text("PubDate:"),
-                                                Text(_feeditems[index].pubDate)
-                                              ],
+                                            child: RaisedButton(
+                                              onPressed: () {
+                                                _feeditems[index].read
+                                                    ? unReadRssitem(index)
+                                                    : readRssitem(index);
+                                              },
+                                              child: _feeditems[index].read
+                                                  ? Text("Unlisten")
+                                                  : Text("Listened"),
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  );
-                                });
-                          },
-                          child: Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  child: _curAudio == index
-                                      ? Icon(Icons.stop)
-                                      : Icon(Icons.play_circle_filled),
-                                  onTap: () {
-                                    _curAudio == index
-                                        ? stopAudio()
-                                        : playAudio(index);
-                                  },
+                                      Padding(
+                                          padding: EdgeInsets.all(5),
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.65,
+                                            child: Text(
+                                              _feeditems[index].title,
+                                              textAlign: TextAlign.center,
+                                              overflow: TextOverflow.visible,
+                                            ),
+                                          )),
+                                      Divider(),
+                                      Padding(
+                                        padding: EdgeInsets.all(5),
+                                        child: Text(
+                                          _feeditems[index].pubDate,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      Divider(),
+                                      getAuthor(_feeditems[index].author),
+                                      getAuthorDivider(
+                                          _feeditems[index].author),
+                                      Padding(
+                                          padding: EdgeInsets.all(5),
+                                          child: Html(
+                                              data: _feeditems[index].desc))
+                                    ],
+                                  ),
                                 ),
+                              );
+                            });
+                      },
+                      child: Card(
+                        child: Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                child: _curAudio == index
+                                    ? Icon(Icons.stop)
+                                    : Icon(Icons.play_circle_filled),
+                                onTap: () {
+                                  _curAudio == index
+                                      ? stopAudio()
+                                      : playAudio(index);
+                                },
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(_feeditems[index].title),
-                              ),
-                            ],
-                          ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  Utilities.trimText(_feeditems[index].title)),
+                            ),
+                          ],
                         ),
-                      );
-                    }),
-              ),
+                      ),
+                    );
+                  }),
             ),
           )
         ],
       ),
     );
+  }
+
+  getClearBookmarkWidget() {
+    if (_readUI) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              _dbHelper.clearTable(podcastRssItems).then((value) {
+                getFeedItems(_selectedCat);
+                // getFeedItems(_selectedCat);
+              });
+            },
+            child: Text("Clear"),
+          )
+        ],
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  deleteBookmark(int index) {
+    _feeditems[index].bookmarked = false;
+    _dbHelper
+        .editRssFeedItem(_feeditems[index], podcastRssItems)
+        .then((value) => getFeedItems(_selectedCat));
+  }
+
+  getAuthorDivider(String author) {
+    if (author != null && author.compareTo("") != 0) {
+      return Divider();
+    } else {
+      return Container();
+    }
   }
 
   getAuthor(String author) {
@@ -302,10 +419,11 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
   }
 
   saveBookmark(int index) {
-    _dbHelper
-        .insertRssFeedtem(_feeditems[index], podcastBookmarks)
-        .then((value) {
+    _feeditems[index].bookmarked = true;
+    _dbHelper.editRssFeedItem(_feeditems[index], podcastRssItems).then((value) {
+      print(_feeditems[index].bookmarked.toString() + _feeditems[index].catgry);
       Navigator.of(context).pop();
+      getFeedItems(_selectedCat);
     });
   }
 
@@ -313,20 +431,37 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
     _feeditems[index].read = true;
     _dbHelper.editRssFeedItem(_feeditems[index], podcastRssItems).then((value) {
       Navigator.of(context).pop();
+      getFeedItems(_selectedCat);
+      // getFeedItems(_selectedCat);
+    });
+  }
+
+  unReadRssitem(int index) {
+    _feeditems[index].read = false;
+    _dbHelper.editRssFeedItem(_feeditems[index], podcastRssItems).then((value) {
+      Navigator.of(context).pop();
+      getFeedItems(_selectedCat);
+      // getFeedItems(_selectedCat);
     });
   }
 
   playAudio(int index) {
-    setState(() {
-      if (_curAudio == -1) {
+    if (_curAudio == -1 && !AudioServiceBackground.state.playing) {
+      setState(() {
         _curAudio = index;
-        startAudio(_feeditems[index].url);
-      } else {
-        stopAudio();
+      });
+      final snackBar = SnackBar(content: Text('Audio Loading'));
+      Scaffold.of(_scaffoldContext).showSnackBar(snackBar);
+      startAudio(_feeditems[index].url);
+    } else if (_curAudio > -1 || AudioServiceBackground.state.playing) {
+      stopAudio();
+      setState(() {
         _curAudio = index;
-        startAudio(_feeditems[index].url);
-      }
-    });
+      });
+      final snackBar = SnackBar(content: Text('Audio Loading'));
+      Scaffold.of(_scaffoldContext).showSnackBar(snackBar);
+      startAudio(_feeditems[index].url);
+    }
   }
 
   getCategories() {
@@ -344,55 +479,82 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
     });
   }
 
-  getFeedItems(String cat) {
-    _feeditems.clear();
-    if (_bookmarkUI) {
-      _dbHelper.getBookmarks(podcastBookmarks, cat).then((feedsItems) {
-        setState(() {
-          _feeditems += feedsItems;
+  getFeedItems(String _cat) {
+    try {
+      _feeditems.clear();
+      if (_bookmarkUI) {
+        _dbHelper.getBookmarks(_cat, podcastRssItems).then((feedsItems) {
+          if (_cat.compareTo(_selectedCat) == 0 && _bookmarkUI)
+            setState(() {
+              _feeditems += feedsItems;
+            });
         });
-      });
-    } else if (_readUI) {
-      _dbHelper.getReadRssItems(cat, webRssItems).then((feedItems) {
-        setState(() {
-          _feeditems = feedItems;
+      } else if (_readUI) {
+        _dbHelper.getReadRssItems(_cat, podcastRssItems).then((feedItems) {
+          if (_cat.compareTo(_selectedCat) == 0 && _readUI)
+            setState(() {
+              _feeditems = feedItems;
+            });
         });
-      });
-    } else {
-      _dbHelper.getRssFeeds(cat, podcastFeeds).then((feeds) {
-        feeds.forEach((feed) async {
-          print(feed.url);
-          var rssFeed =
-              new RssFeed.parse((await http.Client().get(feed.url)).body);
-          _dbHelper.getUnreadRssItems(cat, podcastRssItems).then((feedItems) {
-            if (feed.lastBuildDate != rssFeed.lastBuildDate) {
-              rssFeed.items.forEach((feedItem) {
-                String url = feedItem.enclosure.url;
-                CRssFeedItem item = new CRssFeedItem(
-                    title: feedItem.title,
-                    desc: feedItem.description,
-                    url: url,
-                    mediaURL: url,
-                    read: false,
-                    picURL: "",
-                    pubDate: feedItem.pubDate,
-                    author: feedItem.author);
+      } else {
+        _dbHelper.getRssFeeds(_cat, podcastFeeds).then((feeds) {
+          if (_cat.compareTo(_selectedCat) == 0 && !_readUI && !_bookmarkUI)
+            feeds.forEach((feed) async {
+              print(feed.url);
+              String FeedBody = (await http.Client().get(feed.url)).body;
 
-                _dbHelper.hasFeeditem(item, podcastRssItems).then((value) {
-                  if (!value) {
-                    _feeditems.add(item);
-                    _dbHelper.insertRssFeedtem(item, podcastRssItems);
-                  }
+              var rssFeed = new RssFeed.parse(FeedBody);
+
+              _dbHelper
+                  .getUnreadRssItems(_cat, podcastRssItems)
+                  .then((feedItems) {
+                if (feed.lastBuildDate == null ||
+                    feed.lastBuildDate != rssFeed.lastBuildDate) {
+                  if (_cat.compareTo(_selectedCat) == 0 &&
+                      !_readUI &&
+                      !_bookmarkUI)
+                    rssFeed.items.forEach((feedItem) {
+                      if (_cat.compareTo(_selectedCat) == 0 &&
+                          !_readUI &&
+                          !_bookmarkUI) {
+                        String url = feedItem.enclosure.url;
+                        CRssFeedItem item = new CRssFeedItem(
+                            title: feedItem.title,
+                            desc: feedItem.description,
+                            url: url,
+                            mediaURL: url,
+                            read: false,
+                            picURL: "",
+                            pubDate: feedItem.pubDate,
+                            author: feedItem.author,
+                            bookmarked: false,
+                            catgry: _cat);
+
+                        _dbHelper
+                            .hasFeeditem(item, podcastRssItems)
+                            .then((value) {
+                          if (!value) {
+                            _feeditems.add(item);
+                            _dbHelper.insertRssFeedtem(item, podcastRssItems);
+                          }
+                        });
+                      }
+                    });
+                }
+
+                setState(() {
+                  if (_cat.compareTo(_selectedCat) == 0 &&
+                      !_readUI &&
+                      !_bookmarkUI) _feeditems += feedItems;
                 });
               });
-            }
-
-            setState(() {
-              _feeditems += feedItems;
             });
-          });
         });
-      });
+      }
+    } catch (e) {
+      final snackBar = SnackBar(content: Text('Some Error has occured'));
+      Scaffold.of(_scaffoldContext).showSnackBar(snackBar);
+      print(e.toString());
     }
   }
 
@@ -431,8 +593,10 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
                     setState(() {
                       _isSelected[catTextController.text] = true;
                       _isSelected[_selectedCat] = false;
+                      _selectedCat = catTextController.text;
                       _categories.add(catTextController.text);
                       getFeedItems(_selectedCat);
+                      // getFeedItems(_selectedCat);
                     });
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
@@ -502,33 +666,50 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
                         height: 40,
                         child: RaisedButton(
                           onPressed: () async {
-                            String rssURL = rssTextController.text;
-                            final response =
-                                await http.Client().get(Uri.parse(rssURL));
-                            var rssFeed = new RssFeed.parse(response.body);
-                            String url = "";
-                            if (rssFeed.image != null) url = rssFeed.image.url;
-                            final CRssFeed rss = new CRssFeed(
-                                title: rssFeed.title,
-                                desc: rssFeed.description,
-                                picURL: url,
-                                catgry: catgry,
-                                url: rssURL,
-                                lastBuildDate: rssFeed.lastBuildDate,
-                                author: rssFeed.author);
+                            final snackBar = SnackBar(content: Text('Loading'));
+                            Scaffold.of(_scaffoldContext)
+                                .showSnackBar(snackBar);
+                            try {
+                              String rssURL = rssTextController.text;
+                              final response =
+                                  await http.Client().get(Uri.parse(rssURL));
+                              var rssFeed = new RssFeed.parse(response.body);
+                              if (rssFeed.items[0].enclosure == null ||
+                                  rssFeed.items[0].enclosure.url == null)
+                                throw Exception();
+                              if (catgry.compareTo("") == 0) catgry = "All";
+                              String url = "";
+                              if (rssFeed.image != null)
+                                url = rssFeed.image.url;
+                              final CRssFeed rss = new CRssFeed(
+                                  title: rssFeed.title,
+                                  desc: rssFeed.description,
+                                  picURL: url,
+                                  catgry: catgry,
+                                  url: rssURL,
+                                  lastBuildDate: rssFeed.lastBuildDate,
+                                  author: rssFeed.author,
+                                  atom: false);
 
-                            _dbHelper
-                                .insertRssFeed(rss, podcastFeeds)
-                                .then((value) {
-                              setState(() {
-                                _isSelected[_selectedCat] = false;
-                                _selectedCat = catgry;
-                                _isSelected[catgry] = true;
+                              _dbHelper
+                                  .insertRssFeed(rss, podcastFeeds)
+                                  .then((value) {
+                                setState(() {
+                                  _isSelected[_selectedCat] = false;
+                                  _selectedCat = catgry;
+                                  _isSelected[catgry] = true;
+                                  getFeedItems(_selectedCat);
+                                  // getFeedItems(_selectedCat);
+                                });
+                                Navigator.of(context).pop();
                               });
-                              getFeedItems(_selectedCat);
-                              rssTextController.dispose();
+                            } catch (e) {
                               Navigator.of(context).pop();
-                            });
+                              final snackBar =
+                                  SnackBar(content: Text('Invalid Feed'));
+                              Scaffold.of(_scaffoldContext)
+                                  .showSnackBar(snackBar);
+                            }
                           },
                           child: Text(
                             "Save",
@@ -553,7 +734,7 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
     await AudioService.start(
       backgroundTaskEntrypoint: _myEntrypoint,
       androidNotificationIcon: 'mipmap/ic_launcher',
-      params: {'url': url},
+      params: {'url': url, 'curAudio': _curAudio},
     );
   }
 

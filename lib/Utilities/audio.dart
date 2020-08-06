@@ -27,16 +27,14 @@ class AudioTasks extends BackgroundAudioTask {
     label: 'Stop',
     action: MediaAction.stop,
   );
-  List<MediaControl> controls = [];
 
   final _player = AudioPlayer();
+
+  AudioTasks();
 
   @override
   onStart(Map<String, dynamic> params) async {
     print("inside onStart:" + params['url']);
-    controls.add(playControl);
-    controls.add(pauseControl);
-    controls.add(stopControl);
     print("setting");
     await _player
         .setUrl(params['url'])
@@ -46,7 +44,7 @@ class AudioTasks extends BackgroundAudioTask {
     print("done");
     AudioServiceBackground.setState(
         playing: true,
-        controls: controls,
+        controls: [pauseControl, stopControl],
         processingState: AudioProcessingState.ready);
 
     // AudioServiceBackground.setMediaItem(mediaItem);
@@ -61,11 +59,19 @@ class AudioTasks extends BackgroundAudioTask {
   @override
   onPlay() async {
     _player.play();
+    AudioServiceBackground.setState(
+        playing: true,
+        controls: [pauseControl, stopControl],
+        processingState: AudioProcessingState.ready);
   }
 
   @override
   onPause() {
     _player.pause();
+    AudioServiceBackground.setState(
+        playing: true,
+        controls: [playControl, stopControl],
+        processingState: AudioProcessingState.ready);
   }
 
   @override
@@ -82,7 +88,9 @@ class AudioTasks extends BackgroundAudioTask {
   }
 
   @override
-  onSeekTo(Duration position) {}
+  onSeekTo(Duration position) {
+    _player.seek(position);
+  }
 
   @override
   onAudioFocusLost(AudioInterruption interruption) {}

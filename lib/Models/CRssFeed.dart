@@ -2,11 +2,12 @@ class CRssFeed {
   final int id;
   final String title;
   final String desc;
-  final String catgry;
+  String catgry;
   final String picURL;
   final String url;
   final String lastBuildDate;
   final String author;
+  final bool atom;
 
   CRssFeed(
       {this.id,
@@ -16,7 +17,8 @@ class CRssFeed {
       this.picURL,
       this.url,
       this.lastBuildDate,
-      this.author});
+      this.author,
+      this.atom});
 
   Map<String, dynamic> toMap() {
     return {
@@ -27,7 +29,8 @@ class CRssFeed {
       'picURL': picURL,
       'url': url,
       'lastBuildDate': lastBuildDate,
-      'author': author
+      'author': author,
+      'atom': atom ? 1 : 0
     };
   }
 }
