@@ -69,7 +69,7 @@ class AudioTasks extends BackgroundAudioTask {
   onPause() {
     _player.pause();
     AudioServiceBackground.setState(
-        playing: true,
+        playing: false,
         controls: [playControl, stopControl],
         processingState: AudioProcessingState.ready);
   }

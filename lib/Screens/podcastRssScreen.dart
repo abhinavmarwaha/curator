@@ -446,14 +446,14 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
   }
 
   playAudio(int index) {
-    if (_curAudio == -1 && !AudioServiceBackground.state.playing) {
+    if (_curAudio == -1 && !AudioService.playbackState.playing) {
       setState(() {
         _curAudio = index;
       });
       final snackBar = SnackBar(content: Text('Audio Loading'));
       Scaffold.of(_scaffoldContext).showSnackBar(snackBar);
       startAudio(_feeditems[index].url);
-    } else if (_curAudio > -1 || AudioServiceBackground.state.playing) {
+    } else if (_curAudio > -1 || AudioService.playbackState.playing) {
       stopAudio();
       setState(() {
         _curAudio = index;
