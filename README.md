@@ -6,6 +6,7 @@ Yet again another rss reader with podcast support.
 
 * Rss and Atom
 * Read/unread
+* Dark Mode
 * Bookmark
 * Zen Reader (Experimental)
 * Podcast Support
