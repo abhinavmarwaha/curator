@@ -4,6 +4,7 @@ Yet again another rss reader with podcast support.
 
 # Features:
 
+* Rss and Atom
 * Read/unread
 * Bookmark
 * Zen Reader (Experimental)
