@@ -16,13 +16,13 @@ Yet again another rss reader with podcast support.
 
 # Screenshots
 
-![Screenshot 1](/assets/screenshots/1.png)
+![Screenshot 1](/assets/screenshots/1.png =330x660)
 
-![Screenshot 2](/assets/screenshots/2.png)
+![Screenshot 2](/assets/screenshots/2.png =330x660)
 
-![Screenshot 3](/assets/screenshots/3.png)
+![Screenshot 3](/assets/screenshots/3.png =330x660)
 
-![Screenshot 4](/assets/screenshots/4.png)
+![Screenshot 4](/assets/screenshots/4.png =330x660)
 
 ## Getting Started
 
