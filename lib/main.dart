@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
         child: Builder(builder: (context) {
           final theme = Provider.of<ThemeChanger>(context);
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Curator',
             theme: theme.getTheme(),
             home: AudioServiceWidget(child: DefRssScreen(title: 'Curator')),

@@ -44,6 +44,7 @@ class AudioTasks extends BackgroundAudioTask {
     print("done");
     AudioServiceBackground.setState(
         playing: true,
+        systemActions: [MediaAction.seekTo],
         controls: [pauseControl, stopControl],
         processingState: AudioProcessingState.ready);
 
@@ -53,6 +54,7 @@ class AudioTasks extends BackgroundAudioTask {
   @override
   onStop() async {
     await _player.stop();
+    await _player.dispose();
     await super.onStop();
   }
 

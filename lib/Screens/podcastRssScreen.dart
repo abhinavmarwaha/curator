@@ -733,6 +733,8 @@ class _PodcastRssScreenState extends State<PodcastRssScreen> {
     print("screeen:" + url);
     await AudioService.start(
       backgroundTaskEntrypoint: _myEntrypoint,
+      androidNotificationChannelName: 'Audio Player',
+      androidNotificationColor: 0xFF2196f3,
       androidNotificationIcon: 'mipmap/ic_launcher',
       params: {'url': url, 'curAudio': _curAudio},
     );

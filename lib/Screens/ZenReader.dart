@@ -24,7 +24,6 @@ class _ZenReaderState extends State<ZenReader> {
       setState(() {
         _bestElemReadability =
             readabilityMainElement(doc.documentElement).innerHtml.toString();
-        print(_bestElemReadability);
       });
     });
     super.initState();
