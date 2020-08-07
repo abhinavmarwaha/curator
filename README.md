@@ -16,13 +16,9 @@ Yet again another rss reader with podcast support.
 
 # Screenshots
 
-![Screenshot 1](/assets/screenshots/1.png =330x660)
+<img src="/assets/screenshots/1.png" width="330" height="660" alt="Curator Screenshot 1"><img src="/assets/screenshots/2.png" width="330" height="660" alt="Curator Screenshot 2">
 
-![Screenshot 2](/assets/screenshots/2.png =330x660)
-
-![Screenshot 3](/assets/screenshots/3.png =330x660)
-
-![Screenshot 4](/assets/screenshots/4.png =330x660)
+<img src="/assets/screenshots/3.png" width="330" height="660" alt="Curator Screenshot 3"><img src="/assets/screenshots/4.png" width="330" height="660" alt="Curator Screenshot 4">
 
 ## Getting Started
 
