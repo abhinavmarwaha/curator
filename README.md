@@ -5,6 +5,7 @@ Yet again another rss reader with podcast support.
 # Features:
 
 * All data is in local database
+* Runs on mobile, no need of external server
 * Rss and Atom
 * Read/unread
 * Dark Mode
