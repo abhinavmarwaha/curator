@@ -10,7 +10,7 @@ Yet again another rss reader with podcast support.
 * Bookmark
 * Zen Reader (Experimental)
 * Podcast Support
-* Hold to view the summary of rs feed item
+* Hold to view the summary of rss feed item
 * Categories
 
 
