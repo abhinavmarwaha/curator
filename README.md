@@ -4,6 +4,7 @@ Yet again another rss reader with podcast support.
 
 # Features:
 
+* All data is in local database
 * Rss and Atom
 * Read/unread
 * Dark Mode
@@ -13,6 +14,15 @@ Yet again another rss reader with podcast support.
 * Hold to view the summary of rss feed item
 * Categories
 
+# Screenshots
+
+![Screenshot 1](/assets/screenshots/1.png)
+
+![Screenshot 2](/assets/screenshots/2.png)
+
+![Screenshot 3](/assets/screenshots/3.png)
+
+![Screenshot 4](/assets/screenshots/4.png)
 
 ## Getting Started
 
