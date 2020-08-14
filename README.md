@@ -4,6 +4,8 @@ Yet again another rss reader with podcast support.
 
 # Features:
 
+* All data is in local database
+* Runs on mobile, no need of external server
 * Rss and Atom
 * Read/unread
 * Dark Mode
@@ -13,6 +15,11 @@ Yet again another rss reader with podcast support.
 * Hold to view the summary of rss feed item
 * Categories
 
+# Screenshots
+
+<img src="/assets/screenshots/1.png" width="330" height="660" alt="Curator Screenshot 1"><img src="/assets/screenshots/2.png" width="330" height="660" alt="Curator Screenshot 2">
+
+<img src="/assets/screenshots/3.png" width="330" height="660" alt="Curator Screenshot 3"><img src="/assets/screenshots/4.png" width="330" height="660" alt="Curator Screenshot 4">
 
 ## Getting Started
 
