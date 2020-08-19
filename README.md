@@ -25,6 +25,8 @@ Yet again another rss reader with podcast support.
 
 you can get the latest release [here](https://github.com/abhinavmarwaha/curator/releases).
 
+<a href="https://play.google.com/store/apps/details?id=com.abhinavmarwaha.curator"><img src="/assets/get-it-on-play-store.png" width="300" height="auto" alt="Play Store Link"></a>
+
 ## Issues
 
 * The state management is not so great.
