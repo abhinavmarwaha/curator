@@ -38,3 +38,12 @@ you can get the latest release [here](https://github.com/abhinavmarwaha/curator/
 ## License
 
 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
+## You can suppport me at:
+
+<script src="https://liberapay.com/abhinavmarwaha/widgets/button.js"></script>
+<noscript><a href="https://liberapay.com/abhinavmarwaha/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+
+<a href="https://www.buymeacoffee.com/abhinavmarwaha" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
+<form><script src="https://cdn.razorpay.com/static/widget/payment-button.js" data-payment_button_id="pl_FTpWCGgwQKYI1R"> </script> </form>
