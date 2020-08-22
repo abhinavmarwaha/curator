@@ -41,9 +41,16 @@ you can get the latest release [here](https://github.com/abhinavmarwaha/curator/
 
 ## You can suppport me at:
 
-<script src="https://liberapay.com/abhinavmarwaha/widgets/button.js"></script>
 <noscript><a href="https://liberapay.com/abhinavmarwaha/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
 
 <a href="https://www.buymeacoffee.com/abhinavmarwaha" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
-<form><script src="https://cdn.razorpay.com/static/widget/payment-button.js" data-payment_button_id="pl_FTpWCGgwQKYI1R"> </script> </form>
+<div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_FTpcalrOjXyhTn/view" data-text="Support Abhinav" data-color="#528FF0" data-size="large">
+  <script>
+    (function(){
+      var d=document; var x=!d.getElementById('razorpay-embed-btn-js')
+      if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js';
+      s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
+      rzp && rzp.init && rzp.init()}})();
+  </script>
+</div>
