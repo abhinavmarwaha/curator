@@ -1,6 +1,6 @@
-import 'package:curator/Screens/SettingsScreen.dart';
+import 'package:curator/Screens/settingsScreen.dart';
 import 'package:curator/Screens/podcastRssScreen.dart';
-import 'package:curator/Screens/WebRssScreen.dart';
+import 'package:curator/Screens/webRssScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 
