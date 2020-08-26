@@ -29,9 +29,9 @@ you can get the latest release [here](https://github.com/abhinavmarwaha/curator/
 
 ## Have Suggetions ?
 
-You can add an issue (here)[https://github.com/abhinavmarwaha/curator/issues] or fill up a google form (here)[https://forms.gle/p2oHzLMdwtpB6JKK7]
+You can add an issue [here](https://github.com/abhinavmarwaha/curator/issues) or fill up a google form [here](https://forms.gle/p2oHzLMdwtpB6JKK7)
 
-or you can contact me at abhinavmarwaha@protonmail.com or @bladehunter:matrix.org
+or you can contact me at abhinavmarwaha@protonmail.com or [@bladehunter:matrix.org](https://matrix.to/#/@bladehunter:matrix.org)
 
 ## Issues
 
