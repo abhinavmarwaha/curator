@@ -46,3 +46,7 @@ you can get the latest release [here](https://github.com/abhinavmarwaha/curator/
 <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174">
 
 </a><a href="https://rzp.io/l/abhinavmarwaha"><img src="/assets/rzrpay.png" alt="Pay through Indian Methods"></img></a>
+
+Bitcoin : bc1qfmwzy7qp97r9cnh7n9y4yze8t0lt7dyzyhtg07
+
+Ethereum : 0xd1bc95ef48A6F73bab312d8E87beD3D4Dac01ab9
