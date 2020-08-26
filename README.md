@@ -27,6 +27,12 @@ you can get the latest release [here](https://github.com/abhinavmarwaha/curator/
 
 <a href="https://play.google.com/store/apps/details?id=com.abhinavmarwaha.curator"><img src="/assets/get-it-on-play-store.png" width="300" height="auto" alt="Play Store Link"></a>
 
+## Have Suggetions ?
+
+You can add an issue (here)[https://github.com/abhinavmarwaha/curator/issues] or fill up a google form (here)[https://forms.gle/p2oHzLMdwtpB6JKK7]
+
+or you can contact me at abhinavmarwaha@protonmail.com or @bladehunter:matrix.org
+
 ## Issues
 
 * The state management is not so great.
