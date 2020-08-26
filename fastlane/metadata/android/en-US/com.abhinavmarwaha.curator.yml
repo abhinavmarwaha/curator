@@ -13,6 +13,10 @@ Bitcoin: bc1qfmwzy7qp97r9cnh7n9y4yze8t0lt7dyzyhtg07
 AutoName: Curator
 Description: |-
     Features:
+    All data is in local database
+    Runs on mobile, no need of external server
+    Rss and Atom
+    Dark Mode
     Read/unread
     Bookmark
     Zen Reader (Experimental)
