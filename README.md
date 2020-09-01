@@ -25,6 +25,8 @@ Yet again another rss reader with podcast support.
 
 you can get the latest release [here](https://github.com/abhinavmarwaha/curator/releases).
 
+<a href="https://f-droid.org/en/packages/com.abhinavmarwaha.curator/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75"></a>
+
 <a href="https://play.google.com/store/apps/details?id=com.abhinavmarwaha.curator"><img src="/assets/get-it-on-play-store.png" width="300" height="auto" alt="Play Store Link"></a>
 
 ## Have Suggetions ?
