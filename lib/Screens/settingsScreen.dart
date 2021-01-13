@@ -1,3 +1,4 @@
+import 'package:curator/Utilities/custom_icons.dart';
 import 'package:curator/Utilities/utilities.dart';
 import 'package:curator/constants.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Icon(CustomIcons.moon),
+                SizedBox(
+                  width: 10,
+                ),
                 Text("Dark Mode"),
                 Spacer(),
                 Switch(
@@ -63,6 +68,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Icon(Icons.horizontal_split),
+                SizedBox(
+                  width: 10,
+                ),
                 Text("Zen Reader (Experimental)"),
                 Spacer(),
                 Switch(
@@ -96,18 +105,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Request Features"),
+              child: Row(children: [
+                Icon(Icons.app_registration),
+                SizedBox(
+                  width: 10,
+                ),
+                Text("Request Features")
+              ]),
             ),
           ),
         ),
         Card(
           child: GestureDetector(
             onTap: () {
-              // openRateApp();
+              openRateApp();
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Rate App"),
+              child: Row(children: [
+                Icon(Icons.rate_review),
+                SizedBox(
+                  width: 10,
+                ),
+                Text("Rate App")
+              ]),
+            ),
+          ),
+        ),
+        Card(
+          child: GestureDetector(
+            onTap: () {
+              openBuyMeCoffee();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(children: [
+                Icon(CustomIcons.coffee_cup),
+                SizedBox(
+                  width: 10,
+                ),
+                Text("Buy Me a Coffee!")
+              ]),
+            ),
+          ),
+        ),
+        Card(
+          child: GestureDetector(
+            onTap: () {
+              openGithubRepo();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(children: [
+                Icon(Icons.star),
+                SizedBox(
+                  width: 10,
+                ),
+                Text("Star the Github Repo")
+              ]),
             ),
           ),
         ),
@@ -119,11 +174,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Utilities.launchInWebViewOrVC(PRIVACYPOLICYURL);
   }
 
+  openBuyMeCoffee() {
+    Utilities.launchInWebViewOrVC(BUYMEACOFFEE);
+  }
+
   openFeaturesForm() {
     Utilities.launchInWebViewOrVC(FEATUREFORMURL);
   }
 
   openRateApp() {
     Utilities.launchInWebViewOrVC(RATEAPPURL);
+  }
+
+  openGithubRepo() {
+    Utilities.launchInWebViewOrVC(GITHUBREPO);
   }
 }

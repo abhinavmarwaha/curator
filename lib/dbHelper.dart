@@ -17,9 +17,9 @@ class DbHelper {
         // db.execute(
         // "CREATE TABLE webBookmarks(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, mediaURL TEXT, url TEXT, pubDate TEXT, author TEXT, bookmarked INTEGER);");
         db.execute(
-            "CREATE TABLE webRssItems(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, mediaURL TEXT, url TEXT, pubDate TEXT, author TEXT, bookmarked INTEGER);");
+            "CREATE TABLE webRssItems(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, mediaURL TEXT, url TEXT, pubDate TEXT, author TEXT, bookmarked INTEGER, feedTitle TEXT);");
         db.execute(
-            "CREATE TABLE podcastRssItems(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, mediaURL TEXT, url TEXT, pubDate TEXT, author TEXT, bookmarked INTEGER);");
+            "CREATE TABLE podcastRssItems(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, mediaURL TEXT, url TEXT, pubDate TEXT, author TEXT, bookmarked INTEGER, feedTitle TEXT);");
         // db.execute(
         // "CREATE TABLE podcastBookmarks(feedID TEXT, id INTEGER PRIMARY KEY, title TEXT, desc TEXT, read INTEGER, catgry TEXT, picURL TEXT, mediaURL TEXT, url TEXT, pubDate TEXT, author TEXT);");
         db.execute(
@@ -138,6 +138,7 @@ class DbHelper {
           pubDate: maps[i]['pubDate'],
           author: maps[i]['author'],
           feedID: maps[i]['feedID'],
+          feedTitle: maps[i]['feedTitle'],
           bookmarked: maps[i]['bookmarked'] == 1);
     });
   }
@@ -161,6 +162,7 @@ class DbHelper {
           picURL: maps[i]['picURL'],
           url: maps[i]['url'],
           pubDate: maps[i]['pubDate'],
+          feedTitle: maps[i]['feedTitle'],
           author: maps[i]['author'],
           feedID: maps[i]['feedID'],
           bookmarked: maps[i]['bookmarked'] == 1);
@@ -190,6 +192,7 @@ class DbHelper {
           pubDate: maps[i]['pubDate'],
           author: maps[i]['author'],
           feedID: maps[i]['feedID'],
+          feedTitle: maps[i]['feedTitle'],
           bookmarked: maps[i]['bookmarked'] == 1);
     });
   }

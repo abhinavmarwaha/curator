@@ -20,7 +20,7 @@ class _FeedsScreen extends State<FeedsScreen> {
   Map<String, bool> _isSelected = {};
   String _selectedCat = "All";
   DbHelper _dbHelper = new DbHelper();
-  TextStyle greyTextStyle = new TextStyle(color: Colors.grey);
+  final double fontS = 25;
   String _whichDB = "";
   String _whichCat = "";
 
@@ -42,14 +42,13 @@ class _FeedsScreen extends State<FeedsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+        padding: MediaQuery.of(context).padding,
         child: Column(
           children: <Widget>[
             Container(
               height: 30,
               child: ListView.builder(
                 itemCount: _categories.length,
-                padding: const EdgeInsets.all(2.0),
                 itemBuilder: (context, index) {
                   return GestureDetector(
                       onTap: () {
@@ -62,19 +61,21 @@ class _FeedsScreen extends State<FeedsScreen> {
                         });
                       },
                       child: Padding(
-                        padding: const EdgeInsets.all(1.0),
+                        padding: const EdgeInsets.all(4.0),
                         child: _isSelected[_categories[index]]
-                            ? Text(_categories[index])
-                            : Text(
+                            ? Text(
                                 _categories[index],
-                                style: greyTextStyle,
-                              ),
+                                style: TextStyle(fontSize: 16),
+                              )
+                            : Text(_categories[index],
+                                style: TextStyle(
+                                    color: Colors.grey, fontSize: 16)),
                       ));
                 },
                 scrollDirection: Axis.horizontal,
               ),
             ),
-            Flexible(
+            Expanded(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
                 child: ListView.builder(
@@ -89,17 +90,33 @@ class _FeedsScreen extends State<FeedsScreen> {
                               onTap: () {
                                 editCat(index);
                               },
-                              child: Text(
-                                "Edit",
-                                style: TextStyle(backgroundColor: Colors.blue),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  color: Colors.blue,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "Edit",
+                                    ),
+                                  ),
+                                ),
                               )),
                           GestureDetector(
                               onTap: () {
                                 deleteFeed(index);
                               },
-                              child: Text(
-                                "Delete",
-                                style: TextStyle(backgroundColor: Colors.red),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  color: Colors.red,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "Delete",
+                                    ),
+                                  ),
+                                ),
                               ))
                         ],
                       );

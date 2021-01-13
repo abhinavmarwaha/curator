@@ -8,3 +8,4 @@ GeneratedPluginRegistrant.java
 key.jks
 keystore.jks
 upload_certificate.pem
+key.properties

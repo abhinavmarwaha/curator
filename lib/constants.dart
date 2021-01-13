@@ -11,3 +11,7 @@ const String PRIVACYPOLICYURL =
 const String FEATUREFORMURL = "https://forms.gle/p2oHzLMdwtpB6JKK7";
 const String RATEAPPURL =
     "https://play.google.com/store/apps/details?id=com.abhinavmarwaha.curator";
+
+const String BUYMEACOFFEE = "https://www.buymeacoffee.com/abhinavmarwaha";
+
+const String GITHUBREPO = "https://github.com/abhinavmarwaha/curator";

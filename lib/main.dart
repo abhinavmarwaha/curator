@@ -1,5 +1,5 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:curator/Screens/defRssScreen.dart';
+import 'package:curator/Screens/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Utilities/ThemeChanger.dart';
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Curator',
             theme: theme.getTheme(),
-            home: AudioServiceWidget(child: DefRssScreen(title: 'Curator')),
+            home: AudioServiceWidget(child: HomeScreen(title: 'Curator')),
           );
         }));
   }

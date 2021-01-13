@@ -44,8 +44,16 @@ class AudioTasks extends BackgroundAudioTask {
     print("done");
     AudioServiceBackground.setState(
         playing: true,
-        systemActions: [MediaAction.seekTo],
+        systemActions: [
+          MediaAction.seekTo,
+          MediaAction.seekForward,
+          MediaAction.seekBackward,
+        ],
         controls: [pauseControl, stopControl],
+        androidCompactActions: [0, 1, 3],
+        position: _player.position,
+        bufferedPosition: _player.bufferedPosition,
+        speed: _player.speed,
         processingState: AudioProcessingState.ready);
 
     // AudioServiceBackground.setMediaItem(mediaItem);
@@ -63,6 +71,15 @@ class AudioTasks extends BackgroundAudioTask {
     _player.play();
     AudioServiceBackground.setState(
         playing: true,
+        systemActions: [
+          MediaAction.seekTo,
+          MediaAction.seekForward,
+          MediaAction.seekBackward,
+        ],
+        androidCompactActions: [0, 1, 3],
+        position: _player.position,
+        bufferedPosition: _player.bufferedPosition,
+        speed: _player.speed,
         controls: [pauseControl, stopControl],
         processingState: AudioProcessingState.ready);
   }
@@ -70,39 +87,48 @@ class AudioTasks extends BackgroundAudioTask {
   @override
   onPause() {
     _player.pause();
-    AudioServiceBackground.setState(
+    return AudioServiceBackground.setState(
         playing: false,
+        systemActions: [
+          MediaAction.seekTo,
+          MediaAction.seekForward,
+          MediaAction.seekBackward,
+        ],
+        androidCompactActions: [0, 1, 3],
+        position: _player.position,
+        bufferedPosition: _player.bufferedPosition,
+        speed: _player.speed,
         controls: [playControl, stopControl],
         processingState: AudioProcessingState.ready);
   }
 
-  @override
-  onClick(MediaButton button) {}
+  // @override
+  // onClick(MediaButton button) {}
 
-  @override
-  onSkipToNext() {
-    // AudioServiceBackground.setMediaItem(mediaItem);
-  }
+  // @override
+  // onSkipToNext() {
+  //   // AudioServiceBackground.setMediaItem(mediaItem);
+  // }
 
-  @override
-  onSkipToPrevious() {
-    // AudioServiceBackground.setMediaItem(mediaItem);
-  }
+  // @override
+  // onSkipToPrevious() {
+  //   // AudioServiceBackground.setMediaItem(mediaItem);
+  // }
 
   @override
   onSeekTo(Duration position) {
-    _player.seek(position);
+    return _player.seek(position);
   }
 
-  @override
-  onAudioFocusLost(AudioInterruption interruption) {}
+  // @override
+  // onAudioFocusLost(AudioInterruption interruption) {}
 
-  @override
-  onAudioFocusGained(AudioInterruption interruption) {}
+  // @override
+  // onAudioFocusGained(AudioInterruption interruption) {}
 
-  @override
-  void onAddQueueItem(MediaItem mediaItem) {
-    //AudioServiceBackground.setQueue(queue)
-    super.onAddQueueItem(mediaItem);
-  }
+  // @override
+  // void onAddQueueItem(MediaItem mediaItem) {
+  //   //AudioServiceBackground.setQueue(queue)
+  //   super.onAddQueueItem(mediaItem);
+  // }
 }
