@@ -20,9 +20,9 @@ Curator - Yet again another rss reader with podcast support.
 <br>
 
 <p align='center'>
-    <img src="https://img.shields.io/github/license/abhinavmarwaha/curator?color=teal"/>
-    <img src="https://img.shields.io/github/v/release/abhinavmarwaha/curator?include_prereleases&color=teal"/>
-    <img src="https://img.shields.io/github/downloads/abhinavmarwaha/curator/total?color=teal"/>  
+    <img src="https://img.shields.io/github/license/abhinavmarwaha/curator?color=orange"/>
+    <img src="https://img.shields.io/github/v/release/abhinavmarwaha/curator?include_prereleases&color=orange"/>
+    <img src="https://img.shields.io/github/downloads/abhinavmarwaha/curator/total?color=orange"/>  
 </p>
 
 <p align='center'> 
