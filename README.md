@@ -28,7 +28,7 @@ Curator - Yet again another rss reader with podcast support.
 <p align='center'> 
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="270" height="540"/>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="270" height="540"/>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="270" height="540"/> 
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="270" height="540"/> 
 </p>
 
 
@@ -36,7 +36,7 @@ Curator - Yet again another rss reader with podcast support.
 
 * All data is in local database
 * Runs on mobile, no need of external server
-* Rss and Atom
+* Rss, Atom and OPML support
 * Read/unread
 * Dark Mode
 * Bookmark
@@ -44,6 +44,7 @@ Curator - Yet again another rss reader with podcast support.
 * Podcast Support
 * Hold to view the summary of rss feed item
 * Categories
+
 
 ## Getting Started
 
@@ -53,7 +54,7 @@ you can get the latest release [here](https://github.com/abhinavmarwaha/curator/
 
 You can add an issue [here](https://github.com/abhinavmarwaha/curator/issues) or fill up a google form [here](https://forms.gle/p2oHzLMdwtpB6JKK7).
 
-You can contact me at abhinavmarwaha913@gmail.com.
+You can contact me at heyabhinav@protonmail.com
 
 # Todo
 
