@@ -1,6 +1,36 @@
-# Curator
+<br>
 
-Yet again another rss reader with podcast support. 
+<p align='center'>
+<img height="256"  src="fastlane/metadata/android/en-US/images/featureGraphic.png"/>
+</p>
+
+<p align='center'>
+Curator - Yet again another rss reader with podcast support. 
+</p>
+
+<p align='center'>
+    <a href='ttps://play.google.com/store/apps/details?id=com.abhinavmarwaha.curator'>
+        <img  height="56"  alt='Get it on Google Play' style="padding-right:8px;" src='/assets/get-it-on-play-store.png' />
+    </a>
+    <a href='https://f-droid.org/en/packages/com.abhinavmarwaha.curator/'>
+        <img height="56" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png">
+    </a>
+</p>
+
+<br>
+
+<p align='center'>
+    <img src="https://img.shields.io/github/license/abhinavmarwaha/curator?color=teal"/>
+    <img src="https://img.shields.io/github/v/release/abhinavmarwaha/curator?include_prereleases&color=teal"/>
+    <img src="https://img.shields.io/github/downloads/abhinavmarwaha/curator/total?color=teal"/>  
+</p>
+
+<p align='center'> 
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="270" height="540"/>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="270" height="540"/>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="270" height="540"/> 
+</p>
+
 
 # Features:
 
@@ -15,39 +45,21 @@ Yet again another rss reader with podcast support.
 * Hold to view the summary of rss feed item
 * Categories
 
-# Screenshots
-
-<img src="/assets/screenshots/1.png" width="330" height="660" alt="Curator Screenshot 1"><img src="/assets/screenshots/2.png" width="330" height="660" alt="Curator Screenshot 2">
-
-<img src="/assets/screenshots/3.png" width="330" height="660" alt="Curator Screenshot 3"><img src="/assets/screenshots/4.png" width="330" height="660" alt="Curator Screenshot 4">
-
 ## Getting Started
 
 you can get the latest release [here](https://github.com/abhinavmarwaha/curator/releases).
 
-<a href="https://f-droid.org/en/packages/com.abhinavmarwaha.curator/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75"></a>
+# Have Suggetions ?
 
-<a href="https://play.google.com/store/apps/details?id=com.abhinavmarwaha.curator"><img src="/assets/get-it-on-play-store.png" width="300" height="auto" alt="Play Store Link"></a>
+You can add an issue [here](https://github.com/abhinavmarwaha/curator/issues) or fill up a google form [here](https://forms.gle/p2oHzLMdwtpB6JKK7).
 
-## Have Suggetions ?
+You can contact me at abhinavmarwaha913@gmail.com.
 
-You can add an issue [here](https://github.com/abhinavmarwaha/curator/issues) or fill up a google form [here](https://forms.gle/p2oHzLMdwtpB6JKK7)
-
-or you can contact me at heyabhinav@protonmail.com or [@bladehunter:matrix.org](https://matrix.to/#/@bladehunter:matrix.org)
-
-## Issues
-
-* The state management is not so great.
-
-## Todo
+# Todo
 
 [Roadmap](https://github.com/abhinavmarwaha/curator/projects/2).
 
-## License
-
-[GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)
-
-## You can suppport me at:
+# You can suppport me at:
 
 <noscript><a href="https://liberapay.com/abhinavmarwaha/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript><a href="https://www.buymeacoffee.com/abhinavmarwaha" target="_blank">
   
