@@ -181,24 +181,41 @@ class _DefRssScreenState extends State<DefRssScreen> {
   }
 
   parseOpml(Opml opml) {
-    print("     " + opml.items.first.type);
     List<CRssFeed> feedsNew = [];
-    feedsNew = opml.items
-        .map<CRssFeed>((e) => CRssFeed(
-            atom: e.type.toLowerCase().compareTo("rss") == 0 ? false : true,
-            url: e.xmlUrl,
-            title: e.title,
-            desc: e.description))
-        .toList();
+    // feedsNew = opml.items
+    //     .map<CRssFeed>((e) => CRssFeed(
+    //         atom: e.type != null
+    //             ? e.type.toLowerCase().compareTo("rss") == 0
+    //                 ? false
+    //                 : true
+    //             : false,
+    //         url: e.xmlUrl,
+    //         title: e.title,
+    //         desc: e.description))
+    //     .toList();
     opml.items.forEach((element) {
       if (element.nesteditems != null && element.nesteditems.length != 0) {
         feedsNew.addAll(element.nesteditems
             .map((e) => CRssFeed(
-                atom: e.type.toLowerCase().compareTo("rss") == 0 ? false : true,
+                atom: e.type != null
+                    ? e.type.toLowerCase().compareTo("rss") == 0
+                        ? false
+                        : true
+                    : false,
                 url: e.xmlUrl,
                 title: e.title,
                 desc: e.description))
             .toList());
+      } else {
+        feedsNew.add(CRssFeed(
+            atom: element.type != null
+                ? element.type.toLowerCase().compareTo("rss") == 0
+                    ? false
+                    : true
+                : false,
+            url: element.xmlUrl,
+            title: element.title,
+            desc: element.description));
       }
     });
     Navigator.of(context).push(MaterialPageRoute(
@@ -226,7 +243,7 @@ class _DefRssScreenState extends State<DefRssScreen> {
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(new MaterialPageRoute(
-                        builder: (context) => FeedsScreen(false)));
+                        builder: (context) => FeedsScreen(!widget.web)));
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

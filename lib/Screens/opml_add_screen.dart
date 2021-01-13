@@ -18,9 +18,11 @@ class OpmlAddScreen extends StatelessWidget {
         child: Column(children: [
           RaisedButton(
             onPressed: () {
-              Future.wait(feeds.map((e) => DbHelper()
-                      .insertRssFeed(e, web ? webFeeds : podcastFeeds)))
-                  .then((value) => Navigator.pop(context));
+              Future.wait(feeds.map((e) => DbHelper().insertRssFeed(
+                  e, web ? webFeeds : podcastFeeds))).then((value) {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              });
             },
             child: Text("Save"),
           ),
