@@ -13,7 +13,10 @@ Curator - Yet again another rss reader with podcast support.
         <img  height="56"  alt='Get it on Google Play' style="padding-right:8px;" src='/assets/get-it-on-play-store.png' />
     </a>
     <a href='https://f-droid.org/en/packages/com.abhinavmarwaha.curator/'>
-        <img height="56" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png">
+        <img height="70" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png">
+    </a>
+    <a href='https://github.com/abhinavmarwaha/curator/releases/latest'>
+    <img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" alt="Get it on Github" height="70">
     </a>
 </p>
 
@@ -44,11 +47,6 @@ Curator - Yet again another rss reader with podcast support.
 * Podcast Support
 * Hold to view the summary of rss feed item
 * Categories
-
-
-## Getting Started
-
-you can get the latest release [here](https://github.com/abhinavmarwaha/curator/releases).
 
 # Have Suggetions ?
 
