@@ -65,6 +65,6 @@ You can contact me at heyabhinav@protonmail.com
 <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174">
 </a>
 
-Bitcoin : bc1qfmwzy7qp97r9cnh7n9y4yze8t0lt7dyzyhtg07
+Bitcoin : 35Tzo8hTsggF2YENmBUc4ZiMjCKNYjgmHH
 
-Ethereum : 0xd1bc95ef48A6F73bab312d8E87beD3D4Dac01ab9
+Ethereum : 0x8a7efa455a1c2e44dd4ff3aeccb36f1f840c677e
