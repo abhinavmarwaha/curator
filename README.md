@@ -48,7 +48,7 @@ Curator - Yet again another rss reader with podcast support.
 * Hold to view the summary of rss feed item
 * Categories
 
-# Have Suggetions ?
+# Have Suggestions ?
 
 You can add an issue [here](https://github.com/abhinavmarwaha/curator/issues) or fill up a google form [here](https://forms.gle/p2oHzLMdwtpB6JKK7).
 
