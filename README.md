@@ -9,7 +9,7 @@ Curator - Yet again another rss reader with podcast support.
 </p>
 
 <p align='center'>
-    <a href='ttps://play.google.com/store/apps/details?id=com.abhinavmarwaha.curator'>
+    <a href='https://play.google.com/store/apps/details?id=com.abhinavmarwaha.curator'>
         <img  height="56"  alt='Get it on Google Play' style="padding-right:8px;" src='/assets/get-it-on-play-store.png' />
     </a>
     <a href='https://f-droid.org/en/packages/com.abhinavmarwaha.curator/'>
